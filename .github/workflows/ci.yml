@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
 env:
   DOTNET_VERSION: '9.0.x'
   NODE_VERSION: '20.x'
@@ -16,6 +21,8 @@ jobs:
   # ==================== Backend Build & Test ====================
   backend-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         service: [PaymentService, MerchantService, AuthService]
@@ -42,6 +49,8 @@ jobs:
   # ==================== Frontend Build ====================
   frontend-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         app: [merchant-portal, admin-portal, checkout]
@@ -70,6 +79,9 @@ jobs:
   # ==================== Security Scanning ====================
   security-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     needs: [backend-build]
     steps:
       - uses: actions/checkout@v4
@@ -88,6 +100,9 @@ jobs:
   # ==================== Docker Build ====================
   docker-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: [backend-build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     strategy:
