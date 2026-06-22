@@ -1,5 +1,5 @@
 # ── Build Stage ───────────────────────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 COPY AsegyaPay.sln ./
@@ -17,7 +17,7 @@ RUN dotnet publish ApiGateway/AsegyaPay.ApiGateway/AsegyaPay.ApiGateway.csproj \
     --no-restore
 
 # ── Runtime Stage ─────────────────────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
 RUN addgroup --system --gid 1000 appgroup && \

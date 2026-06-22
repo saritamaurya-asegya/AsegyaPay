@@ -60,7 +60,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
 ## Service Responsibilities
 
 ### API Gateway
-- **Technology**: ASP.NET Core 9 + YARP
+- **Technology**: ASP.NET Core 10 + YARP
 - **Responsibilities**:
   - Reverse proxy and load balancing
   - JWT token validation
@@ -69,7 +69,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - WAF integration
 
 ### Auth Service
-- **Technology**: ASP.NET Core 9
+- **Technology**: ASP.NET Core 10
 - **Responsibilities**:
   - User registration and authentication
   - JWT access token issuance (1h TTL)
@@ -79,7 +79,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - OAuth 2.1 / OpenID Connect
 
 ### Payment Service
-- **Technology**: ASP.NET Core 9 + PostgreSQL
+- **Technology**: ASP.NET Core 10 + PostgreSQL
 - **Responsibilities**:
   - Payment order creation
   - Payment routing (smart routing to best gateway)
@@ -90,7 +90,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - Idempotency key enforcement
 
 ### Merchant Service
-- **Technology**: ASP.NET Core 9 + PostgreSQL
+- **Technology**: ASP.NET Core 10 + PostgreSQL
 - **Responsibilities**:
   - Merchant registration and onboarding
   - KYC document collection and verification
@@ -99,7 +99,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - Team and role management
 
 ### Settlement Service
-- **Technology**: ASP.NET Core 9 + PostgreSQL
+- **Technology**: ASP.NET Core 10 + PostgreSQL
 - **Responsibilities**:
   - T+1/T+2 settlement cycle management
   - Fee calculation (MDR, GST)
@@ -108,7 +108,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - UTR number tracking
 
 ### Fraud Detection Service
-- **Technology**: ASP.NET Core 9 + ML.NET + Redis
+- **Technology**: ASP.NET Core 10 + ML.NET + Redis
 - **Responsibilities**:
   - Real-time risk scoring (< 50ms target)
   - ML model inference
@@ -118,7 +118,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - Chargeback risk assessment
 
 ### Subscription Service
-- **Technology**: ASP.NET Core 9 + PostgreSQL
+- **Technology**: ASP.NET Core 10 + PostgreSQL
 - **Responsibilities**:
   - Billing plan management
   - Subscription lifecycle (create, pause, cancel)
@@ -128,7 +128,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - Proration on upgrades/downgrades
 
 ### Payout Service
-- **Technology**: ASP.NET Core 9 + PostgreSQL
+- **Technology**: ASP.NET Core 10 + PostgreSQL
 - **Responsibilities**:
   - Instant payouts (UPI, bank transfer)
   - Bulk payout processing
@@ -137,7 +137,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - UTR reconciliation
 
 ### Notification Service
-- **Technology**: ASP.NET Core 9 + Kafka consumer
+- **Technology**: ASP.NET Core 10 + Kafka consumer
 - **Responsibilities**:
   - Webhook delivery with retry logic (exponential backoff)
   - Email notifications (transactional)
@@ -146,7 +146,7 @@ AsegyaPay is built on a **microservices architecture** following **Domain-Driven
   - Notification template management
 
 ### Analytics Service
-- **Technology**: ASP.NET Core 9 + Elasticsearch
+- **Technology**: ASP.NET Core 10 + Elasticsearch
 - **Responsibilities**:
   - Real-time transaction analytics
   - Revenue reporting
