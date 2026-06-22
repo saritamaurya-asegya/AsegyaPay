@@ -5,7 +5,7 @@
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) ≥ 1.28
 - [Helm](https://helm.sh/) ≥ 3.14
 - [Docker](https://docs.docker.com/get-docker/) ≥ 24
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Node.js 20+](https://nodejs.org/)
 
 ---
