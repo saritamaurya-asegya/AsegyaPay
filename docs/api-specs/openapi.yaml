@@ -1,0 +1,458 @@
+openapi: 3.1.0
+info:
+  title: AsegyaPay Payment Gateway API
+  description: |
+    Enterprise-grade payment gateway API for processing payments, managing merchants,
+    handling subscriptions, and facilitating payouts.
+  version: 1.0.0
+  contact:
+    name: AsegyaPay Developer Support
+    email: dev@asegyapay.com
+    url: https://docs.asegyapay.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.asegyapay.com/v1
+    description: Production
+  - url: https://sandbox.asegyapay.com/v1
+    description: Sandbox
+  - url: http://localhost:5000/api/v1
+    description: Local Development
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []
+
+tags:
+  - name: Payments
+    description: Payment processing endpoints
+  - name: Refunds
+    description: Refund management
+  - name: Merchants
+    description: Merchant management
+  - name: Subscriptions
+    description: Subscription billing
+  - name: Payouts
+    description: Payout and disbursement
+  - name: Settlements
+    description: Settlement management
+
+paths:
+  /payments:
+    post:
+      tags: [Payments]
+      summary: Create a payment
+      description: Initiate a new payment order
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+            examples:
+              card_payment:
+                summary: Card payment
+                value:
+                  amount: 50000
+                  currency: INR
+                  method: card
+                  description: "Order #12345"
+                  return_url: "https://merchant.com/callback"
+              upi_payment:
+                summary: UPI payment
+                value:
+                  amount: 10000
+                  currency: INR
+                  method: upi
+                  method_details:
+                    upi:
+                      vpa: "user@upi"
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+    get:
+      tags: [Payments]
+      summary: List payments
+      description: Retrieve payments with filtering and pagination
+      operationId: listPayments
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: page_size
+          in: query
+          schema: { type: integer, default: 20, maximum: 100 }
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [created, authorized, captured, failed, refunded]
+        - name: method
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Paginated list of payments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentResponse'
+
+  /payments/{id}:
+    get:
+      tags: [Payments]
+      summary: Get payment details
+      operationId: getPayment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Payment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /payments/{id}/capture:
+    post:
+      tags: [Payments]
+      summary: Capture an authorized payment
+      operationId: capturePayment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: Amount to capture (for partial capture)
+      responses:
+        '200':
+          description: Payment captured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+
+  /payments/{id}/refund:
+    post:
+      tags: [Payments]
+      summary: Refund a payment
+      operationId: refundPayment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: Refund initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+
+  /subscriptions:
+    post:
+      tags: [Subscriptions]
+      summary: Create a subscription
+      operationId: createSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '201':
+          description: Subscription created
+
+  /payouts:
+    post:
+      tags: [Payouts]
+      summary: Create a payout
+      operationId: createPayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePayoutRequest'
+      responses:
+        '201':
+          description: Payout initiated
+
+  /merchants/register:
+    post:
+      tags: [Merchants]
+      summary: Register a new merchant
+      operationId: registerMerchant
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantRegistrationRequest'
+      responses:
+        '201':
+          description: Merchant registered
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+
+  schemas:
+    CreatePaymentRequest:
+      type: object
+      required: [amount, currency, method]
+      properties:
+        amount:
+          type: number
+          description: Amount in smallest currency unit (paise for INR)
+          minimum: 1
+        currency:
+          type: string
+          enum: [INR, USD, EUR, GBP, SGD, AED]
+        method:
+          type: string
+          enum: [card, upi, netbanking, wallet, emi, bnpl]
+        description:
+          type: string
+          maxLength: 255
+        order_id:
+          type: string
+        customer_id:
+          type: string
+        return_url:
+          type: string
+          format: uri
+        callback_url:
+          type: string
+          format: uri
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        method_details:
+          $ref: '#/components/schemas/PaymentMethodDetails'
+
+    PaymentMethodDetails:
+      type: object
+      properties:
+        card:
+          type: object
+          properties:
+            token: { type: string }
+            save_card: { type: boolean }
+        upi:
+          type: object
+          properties:
+            vpa: { type: string }
+            flow: { type: string, enum: [collect, intent, qr] }
+        netbanking:
+          type: object
+          properties:
+            bank_code: { type: string }
+        wallet:
+          type: object
+          properties:
+            provider: { type: string }
+
+    PaymentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id: { type: string }
+            merchant_id: { type: string }
+            amount: { type: number }
+            currency: { type: string }
+            status: { type: string }
+            method: { type: string }
+            description: { type: string }
+            order_id: { type: string }
+            reference_id: { type: string }
+            created_at: { type: string, format: date-time }
+            completed_at: { type: string, format: date-time }
+            failure_reason: { type: string }
+
+    PaginatedPaymentResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/PaymentResponse'
+            page: { type: integer }
+            page_size: { type: integer }
+            total_count: { type: integer }
+            total_pages: { type: integer }
+
+    RefundRequest:
+      type: object
+      required: [amount]
+      properties:
+        amount:
+          type: number
+          minimum: 1
+        reason:
+          type: string
+
+    RefundResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            id: { type: string }
+            payment_id: { type: string }
+            amount: { type: number }
+            status: { type: string }
+            created_at: { type: string, format: date-time }
+
+    CreateSubscriptionRequest:
+      type: object
+      required: [plan_id, customer_id]
+      properties:
+        plan_id: { type: string }
+        customer_id: { type: string }
+        start_date: { type: string, format: date }
+        metadata:
+          type: object
+          additionalProperties: { type: string }
+
+    CreatePayoutRequest:
+      type: object
+      required: [amount, currency, beneficiary]
+      properties:
+        amount: { type: number, minimum: 1 }
+        currency: { type: string }
+        beneficiary:
+          type: object
+          required: [name, account_type]
+          properties:
+            name: { type: string }
+            account_type:
+              type: string
+              enum: [bank_account, upi, wallet, card]
+            bank_account:
+              type: object
+              properties:
+                account_number: { type: string }
+                ifsc: { type: string }
+            upi_id: { type: string }
+        purpose: { type: string }
+        narration: { type: string }
+
+    MerchantRegistrationRequest:
+      type: object
+      required: [business_name, email, phone, business_type]
+      properties:
+        business_name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        business_type: { type: string, enum: [individual, partnership, company, llp] }
+        category: { type: string }
+        website: { type: string, format: uri }
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success: { type: boolean, example: false }
+              message: { type: string }
+              errors: { type: array, items: { type: string } }
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success: { type: boolean, example: false }
+              message: { type: string, example: "Unauthorized" }
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success: { type: boolean, example: false }
+              message: { type: string }
+
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          schema: { type: integer }
+        X-RateLimit-Remaining:
+          schema: { type: integer }
+        X-RateLimit-Reset:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success: { type: boolean, example: false }
+              message: { type: string, example: "Rate limit exceeded" }

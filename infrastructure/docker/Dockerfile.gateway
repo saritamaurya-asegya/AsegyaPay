@@ -1,0 +1,19 @@
+# API Gateway Dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+COPY AsegyaPay.sln .
+COPY src/ApiGateway/ src/ApiGateway/
+
+RUN dotnet restore src/ApiGateway/AsegyaPay.ApiGateway.csproj
+RUN dotnet publish src/ApiGateway/AsegyaPay.ApiGateway.csproj -c Release -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+EXPOSE 8080
+
+RUN adduser --disabled-password --gecos '' appuser
+USER appuser
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "AsegyaPay.ApiGateway.dll"]
