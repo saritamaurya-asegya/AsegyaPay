@@ -1,0 +1,34 @@
+# Multi-stage build for ASP.NET Core microservices
+ARG SERVICE_NAME=PaymentService
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG SERVICE_NAME
+WORKDIR /src
+
+# Copy solution and project files
+COPY AsegyaPay.sln .
+COPY src/Shared/ src/Shared/
+COPY src/Services/${SERVICE_NAME}/ src/Services/${SERVICE_NAME}/
+
+# Restore dependencies
+RUN dotnet restore src/Services/${SERVICE_NAME}/API/${SERVICE_NAME}.API.csproj
+
+# Build
+RUN dotnet build src/Services/${SERVICE_NAME}/API/${SERVICE_NAME}.API.csproj -c Release -o /app/build
+
+# Publish
+FROM build AS publish
+ARG SERVICE_NAME
+RUN dotnet publish src/Services/${SERVICE_NAME}/API/${SERVICE_NAME}.API.csproj -c Release -o /app/publish /p:UseAppHost=false
+
+# Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+EXPOSE 8080
+
+# Security: Run as non-root
+RUN adduser --disabled-password --gecos '' appuser
+USER appuser
+
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "*.API.dll"]

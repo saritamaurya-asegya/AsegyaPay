@@ -1,0 +1,62 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+
+# API Gateway
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsegyaPay.ApiGateway", "src\ApiGateway\AsegyaPay.ApiGateway.csproj", "{A1B2C3D4-0001-0001-0001-000000000001}"
+EndProject
+
+# Shared Libraries
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsegyaPay.Common", "src\Shared\AsegyaPay.Common\AsegyaPay.Common.csproj", "{A1B2C3D4-0002-0001-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsegyaPay.Contracts", "src\Shared\AsegyaPay.Contracts\AsegyaPay.Contracts.csproj", "{A1B2C3D4-0002-0002-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsegyaPay.Security", "src\Shared\AsegyaPay.Security\AsegyaPay.Security.csproj", "{A1B2C3D4-0002-0003-0001-000000000001}"
+EndProject
+
+# Payment Service
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.API", "src\Services\PaymentService\API\PaymentService.API.csproj", "{A1B2C3D4-0003-0001-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Application", "src\Services\PaymentService\Application\PaymentService.Application.csproj", "{A1B2C3D4-0003-0002-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Domain", "src\Services\PaymentService\Domain\PaymentService.Domain.csproj", "{A1B2C3D4-0003-0003-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Infrastructure", "src\Services\PaymentService\Infrastructure\PaymentService.Infrastructure.csproj", "{A1B2C3D4-0003-0004-0001-000000000001}"
+EndProject
+
+# Merchant Service
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerchantService.API", "src\Services\MerchantService\API\MerchantService.API.csproj", "{A1B2C3D4-0004-0001-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerchantService.Application", "src\Services\MerchantService\Application\MerchantService.Application.csproj", "{A1B2C3D4-0004-0002-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerchantService.Domain", "src\Services\MerchantService\Domain\MerchantService.Domain.csproj", "{A1B2C3D4-0004-0003-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerchantService.Infrastructure", "src\Services\MerchantService\Infrastructure\MerchantService.Infrastructure.csproj", "{A1B2C3D4-0004-0004-0001-000000000001}"
+EndProject
+
+# Auth Service
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.API", "src\Services\AuthService\API\AuthService.API.csproj", "{A1B2C3D4-0005-0001-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Application", "src\Services\AuthService\Application\AuthService.Application.csproj", "{A1B2C3D4-0005-0002-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Domain", "src\Services\AuthService\Domain\AuthService.Domain.csproj", "{A1B2C3D4-0005-0003-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Infrastructure", "src\Services\AuthService\Infrastructure\AuthService.Infrastructure.csproj", "{A1B2C3D4-0005-0004-0001-000000000001}"
+EndProject
+
+# Settlement Service
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlementService.API", "src\Services\SettlementService\API\SettlementService.API.csproj", "{A1B2C3D4-0006-0001-0001-000000000001}"
+EndProject
+
+# Fraud Service
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FraudService.API", "src\Services\FraudService\API\FraudService.API.csproj", "{A1B2C3D4-0007-0001-0001-000000000001}"
+EndProject
+
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+EndGlobal
