@@ -1,0 +1,938 @@
+openapi: 3.1.0
+info:
+  title: AsegyaPay Payment Gateway API
+  version: 1.0.0
+  description: |
+    Enterprise-grade payment gateway API for accepting, processing, and managing 
+    digital payments globally.
+
+    ## Authentication
+    All endpoints (except `/auth/*`) require a ****** token in the `Authorization` header.
+
+    ```
+    Authorization: ******
+    ```
+
+    ## Base URL
+    - **Production**: `https://api.asegyapay.com/v1`
+    - **Sandbox**: `https://sandbox.asegyapay.com/v1`
+
+    ## Rate Limits
+    - Default: 100 requests/minute per API key
+    - Payment creation: 50 requests/minute
+    - Payout initiation: 20 requests/minute
+
+  contact:
+    name: AsegyaPay Developer Support
+    email: developers@asegyapay.com
+    url: https://developers.asegyapay.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.asegyapay.com/v1
+    description: Production
+  - url: https://sandbox.asegyapay.com/v1
+    description: Sandbox / Testing
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Authentication
+    description: OAuth 2.1 / JWT authentication endpoints
+  - name: Payments
+    description: Core payment processing — create, capture, refund payments
+  - name: Subscriptions
+    description: Recurring billing and subscription management
+  - name: Payouts
+    description: Instant and bulk payouts to bank accounts and UPI
+  - name: Merchants
+    description: Merchant onboarding and management
+  - name: Settlements
+    description: Settlement reports and management
+  - name: Analytics
+    description: Real-time analytics and reporting
+
+paths:
+  # ── Authentication ───────────────────────────────────────────────────────────
+
+  /auth/token:
+    post:
+      tags: [Authentication]
+      summary: Obtain access and refresh tokens
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: merchant@example.com
+              password: "SecureP@ssw0rd"
+      responses:
+        '200':
+          description: Tokens issued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new merchant account
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  # ── Payments ─────────────────────────────────────────────────────────────────
+
+  /payments:
+    post:
+      tags: [Payments]
+      summary: Create a payment order
+      description: |
+        Creates a new payment order. The customer is then redirected to the payment page 
+        using the returned `paymentUrl`, or the payment is processed using the returned `paymentId`.
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+            example:
+              orderId: "ORD_20240115_001"
+              amount: 999.00
+              currency: "INR"
+              method: "UPI"
+              description: "Premium subscription payment"
+              callbackUrl: "https://yoursite.com/payment/callback"
+              redirectUrl: "https://yoursite.com/payment/success"
+      responses:
+        '201':
+          description: Payment order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    get:
+      tags: [Payments]
+      summary: List payments
+      operationId: listPayments
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/PaymentStatus'
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Paginated list of payments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPayments'
+
+  /payments/{id}:
+    get:
+      tags: [Payments]
+      summary: Get payment details
+      operationId: getPayment
+      parameters:
+        - $ref: '#/components/parameters/PaymentId'
+      responses:
+        '200':
+          description: Payment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /payments/{id}/capture:
+    post:
+      tags: [Payments]
+      summary: Capture an authorized payment
+      operationId: capturePayment
+      parameters:
+        - $ref: '#/components/parameters/PaymentId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: decimal
+                  description: Partial capture amount (optional, defaults to full authorized amount)
+      responses:
+        '200':
+          description: Payment captured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaptureResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /payments/{id}/refund:
+    post:
+      tags: [Payments]
+      summary: Refund a payment (full or partial)
+      operationId: refundPayment
+      parameters:
+        - $ref: '#/components/parameters/PaymentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, reason]
+              properties:
+                amount:
+                  type: number
+                  format: decimal
+                reason:
+                  type: string
+                  maxLength: 255
+      responses:
+        '200':
+          description: Refund initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  # ── Subscriptions ────────────────────────────────────────────────────────────
+
+  /plans:
+    post:
+      tags: [Subscriptions]
+      summary: Create a billing plan
+      operationId: createPlan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePlanRequest'
+      responses:
+        '201':
+          description: Plan created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanResponse'
+
+  /subscriptions:
+    post:
+      tags: [Subscriptions]
+      summary: Create a subscription
+      operationId: createSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '201':
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+
+  /subscriptions/{id}:
+    get:
+      tags: [Subscriptions]
+      summary: Get subscription details
+      operationId: getSubscription
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+
+    delete:
+      tags: [Subscriptions]
+      summary: Cancel a subscription
+      operationId: cancelSubscription
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                immediately:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Subscription cancelled
+
+  # ── Payouts ──────────────────────────────────────────────────────────────────
+
+  /payouts:
+    post:
+      tags: [Payouts]
+      summary: Initiate a payout
+      operationId: createPayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePayoutRequest'
+      responses:
+        '201':
+          description: Payout initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutResponse'
+
+  /payouts/bulk:
+    post:
+      tags: [Payouts]
+      summary: Initiate bulk payouts
+      operationId: createBulkPayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [payouts]
+              properties:
+                payouts:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CreatePayoutRequest'
+                  maxItems: 1000
+      responses:
+        '202':
+          description: Bulk payout accepted for processing
+
+  # ── Merchants ─────────────────────────────────────────────────────────────────
+
+  /merchants/me:
+    get:
+      tags: [Merchants]
+      summary: Get merchant profile
+      operationId: getMerchantProfile
+      responses:
+        '200':
+          description: Merchant profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantProfile'
+
+  /merchants/api-keys:
+    post:
+      tags: [Merchants]
+      summary: Generate a new API key
+      operationId: generateApiKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type]
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum: [test, live]
+      responses:
+        '201':
+          description: API key generated (shown only once)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  key:
+                    type: string
+                    description: Full key — shown only once
+                  prefix:
+                    type: string
+
+  /merchants/webhooks:
+    post:
+      tags: [Merchants]
+      summary: Configure a webhook endpoint
+      operationId: addWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRequest'
+      responses:
+        '201':
+          description: Webhook configured
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PaymentId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    BadRequest:
+      description: Bad request — validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized — invalid or expired token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden — insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Conflict — resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # ── Auth ──────────────────────────────────────────────────────────────────
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        mfaToken:
+          type: string
+          description: TOTP code if MFA is enabled
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          description: Seconds until access token expires
+        tokenType:
+          type: string
+          default: ******
+          type: boolean
+
+    RegisterRequest:
+      type: object
+      required: [email, password, firstName, lastName]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        firstName:
+          type: string
+          maxLength: 64
+        lastName:
+          type: string
+          maxLength: 64
+        phoneNumber:
+          type: string
+
+    RegisterResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        email:
+          type: string
+        emailVerificationRequired:
+          type: boolean
+
+    # ── Payments ──────────────────────────────────────────────────────────────
+    CreatePaymentRequest:
+      type: object
+      required: [orderId, amount, currency, method, description]
+      properties:
+        orderId:
+          type: string
+          maxLength: 64
+          description: Your internal order ID (must be unique per merchant)
+        amount:
+          type: number
+          format: decimal
+          minimum: 0.01
+          maximum: 10000000
+        currency:
+          type: string
+          length: 3
+          example: INR
+        method:
+          $ref: '#/components/schemas/PaymentMethod'
+        description:
+          type: string
+          maxLength: 255
+        customerId:
+          type: string
+        callbackUrl:
+          type: string
+          format: uri
+        redirectUrl:
+          type: string
+          format: uri
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    PaymentResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+        orderId:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        paymentUrl:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
+
+    PaymentDetail:
+      allOf:
+        - $ref: '#/components/schemas/PaymentResponse'
+        - type: object
+          properties:
+            method:
+              $ref: '#/components/schemas/PaymentMethod'
+            gatewayTransactionId:
+              type: string
+            fraudScore:
+              type: integer
+              minimum: 0
+              maximum: 1000
+            createdAt:
+              type: string
+              format: date-time
+            capturedAt:
+              type: string
+              format: date-time
+            refunds:
+              type: array
+              items:
+                $ref: '#/components/schemas/RefundDetail'
+
+    CaptureResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+        capturedAmount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+
+    RefundResponse:
+      type: object
+      properties:
+        refundId:
+          type: string
+          format: uuid
+        paymentId:
+          type: string
+          format: uuid
+        refundAmount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+
+    RefundDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        currency:
+          type: string
+        reason:
+          type: string
+        status:
+          type: string
+          enum: [Pending, Processing, Processed, Failed]
+        createdAt:
+          type: string
+          format: date-time
+
+    PaginatedPayments:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentResponse'
+        totalCount:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+
+    PaymentStatus:
+      type: string
+      enum:
+        - Pending
+        - Authorized
+        - Captured
+        - PartiallyRefunded
+        - Refunded
+        - Failed
+        - Cancelled
+        - Expired
+
+    PaymentMethod:
+      type: string
+      enum:
+        - Card
+        - UPI
+        - NetBanking
+        - Wallet
+        - EMI
+        - BNPL
+        - ApplePay
+        - GooglePay
+        - QRCode
+        - TokenizedCard
+
+    # ── Subscriptions ─────────────────────────────────────────────────────────
+    CreatePlanRequest:
+      type: object
+      required: [name, amount, currency, interval]
+      properties:
+        name:
+          type: string
+        amount:
+          type: number
+          minimum: 0
+        currency:
+          type: string
+        interval:
+          type: string
+          enum: [Daily, Weekly, Monthly, Quarterly, Annual]
+        intervalCount:
+          type: integer
+          minimum: 1
+          default: 1
+        trialPeriodDays:
+          type: integer
+          minimum: 0
+        description:
+          type: string
+
+    PlanResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        interval:
+          type: string
+        isActive:
+          type: boolean
+
+    CreateSubscriptionRequest:
+      type: object
+      required: [planId, customerId, paymentMethodToken]
+      properties:
+        planId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+        paymentMethodToken:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    SubscriptionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [Active, Trialing, PastDue, Cancelled, Unpaid, Paused]
+        planId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+        currentPeriodStart:
+          type: string
+          format: date-time
+        currentPeriodEnd:
+          type: string
+          format: date-time
+        trialEnd:
+          type: string
+          format: date-time
+        cancelAtPeriodEnd:
+          type: string
+          format: date-time
+
+    # ── Payouts ──────────────────────────────────────────────────────────────
+    CreatePayoutRequest:
+      type: object
+      required: [amount, currency, mode, beneficiary]
+      properties:
+        amount:
+          type: number
+          minimum: 0.01
+        currency:
+          type: string
+        mode:
+          type: string
+          enum: [BankTransfer, UPI, Wallet, Card]
+        beneficiary:
+          type: object
+          properties:
+            name:
+              type: string
+            accountNumber:
+              type: string
+            ifscCode:
+              type: string
+            upiId:
+              type: string
+        reference:
+          type: string
+        narration:
+          type: string
+        scheduleAt:
+          type: string
+          format: date-time
+
+    PayoutResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        utrNumber:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Merchants ─────────────────────────────────────────────────────────────
+    MerchantProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        businessName:
+          type: string
+        businessEmail:
+          type: string
+        businessType:
+          type: string
+        status:
+          type: string
+          enum: [Pending, Active, Suspended, Terminated]
+        kycStatus:
+          type: string
+          enum: [NotSubmitted, Submitted, UnderReview, Verified, Rejected]
+        mdrRate:
+          type: number
+        settlementCycleInDays:
+          type: integer
+        country:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    WebhookRequest:
+      type: object
+      required: [url, events]
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+            enum:
+              - payment.created
+              - payment.captured
+              - payment.failed
+              - payment.refunded
+              - subscription.created
+              - subscription.renewed
+              - subscription.cancelled
+              - payout.initiated
+              - payout.processed
+              - payout.failed
+
+    # ── Error ─────────────────────────────────────────────────────────────────
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Human-readable error description
+        traceId:
+          type: string
+          description: Request trace ID for debugging
