@@ -1,0 +1,94 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SharedKernel", "SharedKernel\AsegyaPay.SharedKernel\AsegyaPay.SharedKernel.csproj", "{11111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.ApiGateway", "ApiGateway\AsegyaPay.ApiGateway\AsegyaPay.ApiGateway.csproj", "{22222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AuthService.Domain", "Services\AuthService\AsegyaPay.AuthService.Domain\AsegyaPay.AuthService.Domain.csproj", "{31111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AuthService.Application", "Services\AuthService\AsegyaPay.AuthService.Application\AsegyaPay.AuthService.Application.csproj", "{32222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AuthService.Infrastructure", "Services\AuthService\AsegyaPay.AuthService.Infrastructure\AsegyaPay.AuthService.Infrastructure.csproj", "{33333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AuthService.API", "Services\AuthService\AsegyaPay.AuthService.API\AsegyaPay.AuthService.API.csproj", "{34444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PaymentService.Domain", "Services\PaymentService\AsegyaPay.PaymentService.Domain\AsegyaPay.PaymentService.Domain.csproj", "{41111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PaymentService.Application", "Services\PaymentService\AsegyaPay.PaymentService.Application\AsegyaPay.PaymentService.Application.csproj", "{42222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PaymentService.Infrastructure", "Services\PaymentService\AsegyaPay.PaymentService.Infrastructure\AsegyaPay.PaymentService.Infrastructure.csproj", "{43333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PaymentService.API", "Services\PaymentService\AsegyaPay.PaymentService.API\AsegyaPay.PaymentService.API.csproj", "{44444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.MerchantService.Domain", "Services\MerchantService\AsegyaPay.MerchantService.Domain\AsegyaPay.MerchantService.Domain.csproj", "{51111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.MerchantService.Application", "Services\MerchantService\AsegyaPay.MerchantService.Application\AsegyaPay.MerchantService.Application.csproj", "{52222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.MerchantService.Infrastructure", "Services\MerchantService\AsegyaPay.MerchantService.Infrastructure\AsegyaPay.MerchantService.Infrastructure.csproj", "{53333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.MerchantService.API", "Services\MerchantService\AsegyaPay.MerchantService.API\AsegyaPay.MerchantService.API.csproj", "{54444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SettlementService.Domain", "Services\SettlementService\AsegyaPay.SettlementService.Domain\AsegyaPay.SettlementService.Domain.csproj", "{61111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SettlementService.Application", "Services\SettlementService\AsegyaPay.SettlementService.Application\AsegyaPay.SettlementService.Application.csproj", "{62222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SettlementService.Infrastructure", "Services\SettlementService\AsegyaPay.SettlementService.Infrastructure\AsegyaPay.SettlementService.Infrastructure.csproj", "{63333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SettlementService.API", "Services\SettlementService\AsegyaPay.SettlementService.API\AsegyaPay.SettlementService.API.csproj", "{64444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.FraudService.Domain", "Services\FraudService\AsegyaPay.FraudService.Domain\AsegyaPay.FraudService.Domain.csproj", "{71111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.FraudService.Application", "Services\FraudService\AsegyaPay.FraudService.Application\AsegyaPay.FraudService.Application.csproj", "{72222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.FraudService.Infrastructure", "Services\FraudService\AsegyaPay.FraudService.Infrastructure\AsegyaPay.FraudService.Infrastructure.csproj", "{73333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.FraudService.API", "Services\FraudService\AsegyaPay.FraudService.API\AsegyaPay.FraudService.API.csproj", "{74444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SubscriptionService.Domain", "Services\SubscriptionService\AsegyaPay.SubscriptionService.Domain\AsegyaPay.SubscriptionService.Domain.csproj", "{81111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SubscriptionService.Application", "Services\SubscriptionService\AsegyaPay.SubscriptionService.Application\AsegyaPay.SubscriptionService.Application.csproj", "{82222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SubscriptionService.Infrastructure", "Services\SubscriptionService\AsegyaPay.SubscriptionService.Infrastructure\AsegyaPay.SubscriptionService.Infrastructure.csproj", "{83333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.SubscriptionService.API", "Services\SubscriptionService\AsegyaPay.SubscriptionService.API\AsegyaPay.SubscriptionService.API.csproj", "{84444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.NotificationService.Domain", "Services\NotificationService\AsegyaPay.NotificationService.Domain\AsegyaPay.NotificationService.Domain.csproj", "{91111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.NotificationService.Application", "Services\NotificationService\AsegyaPay.NotificationService.Application\AsegyaPay.NotificationService.Application.csproj", "{92222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.NotificationService.Infrastructure", "Services\NotificationService\AsegyaPay.NotificationService.Infrastructure\AsegyaPay.NotificationService.Infrastructure.csproj", "{93333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.NotificationService.API", "Services\NotificationService\AsegyaPay.NotificationService.API\AsegyaPay.NotificationService.API.csproj", "{94444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PayoutService.Domain", "Services\PayoutService\AsegyaPay.PayoutService.Domain\AsegyaPay.PayoutService.Domain.csproj", "{A1111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PayoutService.Application", "Services\PayoutService\AsegyaPay.PayoutService.Application\AsegyaPay.PayoutService.Application.csproj", "{A2222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PayoutService.Infrastructure", "Services\PayoutService\AsegyaPay.PayoutService.Infrastructure\AsegyaPay.PayoutService.Infrastructure.csproj", "{A3333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.PayoutService.API", "Services\PayoutService\AsegyaPay.PayoutService.API\AsegyaPay.PayoutService.API.csproj", "{A4444444-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AnalyticsService.Domain", "Services\AnalyticsService\AsegyaPay.AnalyticsService.Domain\AsegyaPay.AnalyticsService.Domain.csproj", "{B1111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AnalyticsService.Application", "Services\AnalyticsService\AsegyaPay.AnalyticsService.Application\AsegyaPay.AnalyticsService.Application.csproj", "{B2222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AnalyticsService.Infrastructure", "Services\AnalyticsService\AsegyaPay.AnalyticsService.Infrastructure\AsegyaPay.AnalyticsService.Infrastructure.csproj", "{B3333333-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsegyaPay.AnalyticsService.API", "Services\AnalyticsService\AsegyaPay.AnalyticsService.API\AsegyaPay.AnalyticsService.API.csproj", "{B4444444-4444-4444-4444-444444444444}"
+EndProject
+
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {11111111-1111-1111-1111-111111111111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {11111111-1111-1111-1111-111111111111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {11111111-1111-1111-1111-111111111111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {11111111-1111-1111-1111-111111111111}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+EndGlobal
